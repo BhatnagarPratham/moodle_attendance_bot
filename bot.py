@@ -36,11 +36,13 @@ class Bot():
         bot.get(self.attendance_link)  # redirects to login page
         # sign into lms
         bot.implicitly_wait(10)
-        bot.find_element(By.XPATH,
+        try:
+            bot.find_element(By.XPATH,
                          "//*[@id='region-main']/div/div[2]/div/div/div/div/div/div[2]/div[3]/div/a").click()
+        except:
+            pass
 
-
-    def binary_search(rows):
+    def binary_search(self, rows):
         start = 2
         end = len(rows) - 4
 
@@ -53,18 +55,17 @@ class Bot():
             if "Present" in cols[2].text:
                 start = mid + 1
                 continue
-            try:
+
+            if len(row.find_elements(By.TAG_NAME, 'a')) == 0:
+                end = mid-1
+            # print("here")
+            # print(submit_attendance_button.text)
+            else:
                 submit_attendance_button = row.find_element(By.TAG_NAME, 'a')
-                # print("here")
-                # print(submit_attendance_button.text)
                 if "submit" in submit_attendance_button.text.lower():
                     return submit_attendance_button
                 else:
                     end = mid - 1
-            except Exception:
-                end = mid - 1
-                continue
-
         return False
 
 
@@ -89,31 +90,36 @@ class Bot():
 
                 # find the submit attendance button
                 rows = bot.find_elements(By.TAG_NAME, 'tr')
+                # print("submit_button not found")
                 submit_attendance_button = self.binary_search(rows)
-
-                marked = False
-
-                if (submit_attendance_button == False):
+                # print("submit_button found" + str(submit_attendance_button))
+                if submit_attendance_button == False :
                     marked = False
                 else:
                     submit_attendance_button.click()
+                    bot.implicitly_wait(10)
                     present_button = bot.find_element(By.NAME, 'status')
                     # print(present_button.text)
                     present_button.click()
+                    bot.implicitly_wait(10)
                     save_changes = bot.find_element(By.NAME, 'submitbutton')
                     save_changes.click()
                     marked = True
+                # print(marked)
 
+                not_completed = False
                 if ~marked:
                     self.show_error()
-            except:
+
+
+            except Exception:
                 try:
                     gateway_timeout = bot.find_element(By.XPATH, '/html/body/center/h1')
                     if "Gateway" in gateway_timeout:
                         not_completed = True
                     else:
                         not_completed = False
-                except:
+                except Exception:
                     not_completed = True
 
         bot.close()
