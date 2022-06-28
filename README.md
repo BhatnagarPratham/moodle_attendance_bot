@@ -7,6 +7,7 @@ Latest version of python should be installed(preferably Python 3.10 or above)
 
 Once python is installed, install selenium, which can be done by "pip install selenium" in the terminal
 
+Similarlly install webdriver-manager by "pip install webdriver-manager"
 
 
 How to use the bot:
