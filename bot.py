@@ -123,7 +123,7 @@ class Bot():
             # print(marked)
 
             not_completed = False
-            if ~marked:
+            if not marked:
                 self.show_error()
 
 
