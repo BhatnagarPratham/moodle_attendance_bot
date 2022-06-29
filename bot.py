@@ -78,6 +78,12 @@ class Bot():
         root.after(20000, root.destroy)
         tkinter.messagebox.showerror(title="Something went wrong", message="Attendance NOT Marked", parent=texto)
 
+    def show_info(self):
+        root = Tk()
+        texto = Toplevel(root)
+        root.withdraw()
+        root.after(20000, root.destroy)
+        tkinter.messagebox.showinfo(title="Success", message="Attendance Marked Successfully", parent=texto)
 
     def mark_attendance(self):
 
@@ -125,6 +131,7 @@ class Bot():
             not_completed = False
             if not marked:
                 self.show_error()
-
+            else:
+                self.show_info()
 
         bot.close()
