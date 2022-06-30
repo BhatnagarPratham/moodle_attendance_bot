@@ -92,46 +92,49 @@ class Bot():
         self.google_login(bot, self.email, self.password)
         not_completed = True
         while not_completed:
-            self.log_into_lms(bot)
-            bot.implicitly_wait(10)
-
-            # find the submit attendance button
-            rows = bot.find_elements(By.TAG_NAME, 'tr')
-            if len(rows) < 5:
-                # print("here3")
-                continue
-
-            # print("submit_button not found")
-            submit_attendance_button = self.binary_search(rows)
-            # print("submit_button found" + str(submit_attendance_button))
-            if submit_attendance_button == False :
-                marked = False
-            else:
-                submit_attendance_button.click()
+            try:
+                self.log_into_lms(bot)
                 bot.implicitly_wait(10)
-                check = bot.find_elements(By.NAME, 'status')
-                while len(check) == 0:
-                    bot.refresh()
+
+                # find the submit attendance button
+                rows = bot.find_elements(By.TAG_NAME, 'tr')
+                if len(rows) < 5:
+                    # print("here3")
+                    continue
+
+                # print("submit_button not found")
+                submit_attendance_button = self.binary_search(rows)
+                # print("submit_button found" + str(submit_attendance_button))
+                if submit_attendance_button == False:
+                    marked = False
+                else:
+                    submit_attendance_button.click()
                     bot.implicitly_wait(10)
                     check = bot.find_elements(By.NAME, 'status')
-                present_button = check[0]
-                # print(present_button.text)
-                present_button.click()
-                bot.implicitly_wait(10)
-                check = bot.find_elements(By.NAME, 'submitbutton')
-                while len(check) == 0:
-                    bot.refresh()
+                    while len(check) == 0:
+                        bot.refresh()
+                        bot.implicitly_wait(10)
+                        check = bot.find_elements(By.NAME, 'status')
+                    present_button = check[0]
+                    # print(present_button.text)
+                    present_button.click()
                     bot.implicitly_wait(10)
                     check = bot.find_elements(By.NAME, 'submitbutton')
-                save_changes = check[0]
-                save_changes.click()
-                marked = True
-            # print(marked)
+                    while len(check) == 0:
+                        bot.refresh()
+                        bot.implicitly_wait(10)
+                        check = bot.find_elements(By.NAME, 'submitbutton')
+                    save_changes = check[0]
+                    save_changes.click()
+                    marked = True
+                # print(marked)
 
-            not_completed = False
-            if not marked:
-                self.show_error()
-            else:
-                self.show_info()
-
+                not_completed = False
+                if not marked:
+                    self.show_error()
+                else:
+                    self.show_info()
+            except:
+                #nothing
+                pass
         bot.close()
