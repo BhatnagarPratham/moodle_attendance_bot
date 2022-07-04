@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from tkinter import *
-
+from selenium.common.exceptions import *
 
 class Bot():
     def __init__(self, email, password, attendance_link):
@@ -71,6 +71,14 @@ class Bot():
         return False
 
 
+    def linear_search(self, rows):
+        for row in rows:
+            if len(row.find_elements(By.TAG_NAME, 'a')) != 0:
+                submit_attendance_button = row.find_element(By.TAG_NAME, 'a')
+                if "submit" in submit_attendance_button.text.lower():
+                    return submit_attendance_button
+        return False
+
     def show_error(self):
         root = Tk()
         texto = Toplevel(root)
@@ -103,8 +111,10 @@ class Bot():
                     continue
 
                 # print("submit_button not found")
-                submit_attendance_button = self.binary_search(rows)
+                # submit_attendance_button = self.binary_search(rows)
+                submit_attendance_button = self.linear_search(rows)
                 # print("submit_button found" + str(submit_attendance_button))
+
                 if submit_attendance_button == False:
                     marked = False
                 else:
@@ -134,7 +144,8 @@ class Bot():
                     self.show_error()
                 else:
                     self.show_info()
-            except:
-                #nothing
+            except WebDriverException or NoSuchWindowException:
+                not_completed = False
+            except NoSuchWindowException or NoSuchElementException:
                 pass
         bot.close()
